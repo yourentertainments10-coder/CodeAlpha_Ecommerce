@@ -5,6 +5,32 @@ from django.core.management.base import BaseCommand
 from store.models import Product
 
 
+IMAGE_URLS = {
+    "hp-15s-laptop": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&h=675&q=85",
+    "dell-inspiron-laptop": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&h=675&q=85",
+    "samsung-galaxy-m35": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&h=675&q=85",
+    "redmi-note-14": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&h=675&q=85",
+    "boat-rockerz-550": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&h=675&q=85",
+    "noise-smart-watch": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&h=675&q=85",
+    "mi-power-bank": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=900&h=675&q=85",
+    "logitech-mouse": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&h=675&q=85",
+    "hp-laptop-bag": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&h=675&q=85",
+    "portronics-usb-hub": "https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=900&h=675&q=85",
+    "cosmic-byte-keyboard": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&h=675&q=85",
+    "redgear-mouse": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=900&h=675&q=85",
+    "ant-esports-headset": "https://images.unsplash.com/photo-1599669454699-248893623440?auto=format&fit=crop&w=900&h=675&q=85",
+    "levis-jacket": "https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=900&h=675&q=85",
+    "puma-shoes": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&h=675&q=85",
+    "allen-solly-shirt": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=675&q=85",
+    "python-crash-course": "https://placehold.co/900x675/1f2937/f9fafb/png?text=Python+Crash+Course",
+    "data-science-book": "https://placehold.co/900x675/0f766e/f9fafb/png?text=Data+Science+for+Beginners",
+    "atomic-habits": "https://placehold.co/900x675/7c2d12/f9fafb/png?text=Atomic+Habits",
+    "rich-dad-poor-dad": "https://placehold.co/900x675/78350f/f9fafb/png?text=Rich+Dad+Poor+Dad",
+}
+
+FALLBACK_IMAGE_URL = "https://placehold.co/900x675/111827/e5e7eb/png?text=Product+Image"
+
+
 SAMPLE_PRODUCTS = [
    
 ("HP 15s Laptop", "Electronics", "15.6-inch laptop with Intel Core i5 processor, 8GB RAM and 512GB SSD.", "54999.00", 15, "hp-15s-laptop"),
@@ -65,30 +91,7 @@ class Command(BaseCommand):
                     "description": description,
                     "price": Decimal(price),
                     "stock": stock,
-                    # Prefer online image URLs for easy seeding
-                    # Map slugs to product-specific online images.
-                    "image_url": {
-                        "hp-15s-laptop": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80",
-                        "dell-inspiron-laptop": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80",
-                        "samsung-galaxy-m35": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
-                        "redmi-note-14": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80",
-                        "boat-rockerz-550": "https://images.unsplash.com/photo-1518441902112-a8f0a1b6f3d8?auto=format&fit=crop&w=900&q=80",
-                        "noise-smart-watch": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",
-                        "mi-power-bank": "https://images.unsplash.com/photo-1587613999984-2d4f1a5a1f0f?auto=format&fit=crop&w=900&q=80",
-                        "logitech-mouse": "https://images.unsplash.com/photo-1555617952-4f45e7b2b4a4?auto=format&fit=crop&w=900&q=80",
-                        "hp-laptop-bag": "https://images.unsplash.com/photo-1526481280695-3c687fd5432c?auto=format&fit=crop&w=900&q=80",
-                        "portronics-usb-hub": "https://images.unsplash.com/photo-1587825140708-dfafb8a1b2f5?auto=format&fit=crop&w=900&q=80",
-                        "cosmic-byte-keyboard": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80",
-                        "redgear-mouse": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80",
-                        "ant-esports-headset": "https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=900&q=80",
-                        "levis-jacket": "https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=900&q=80",
-                        "puma-shoes": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
-                        "allen-solly-shirt": "https://images.unsplash.com/photo-1520975661595-6453be3f7070?auto=format&fit=crop&w=900&q=80",
-                        "python-crash-course": "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=900&q=80",
-                        "data-science-book": "https://images.unsplash.com/photo-1455885666463-62d9b1d369f2?auto=format&fit=crop&w=900&q=80",
-                        "atomic-habits": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80",
-                        "rich-dad-poor-dad": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80",
-                    }.get(seed, "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80"),
+                    "image_url": IMAGE_URLS.get(seed, FALLBACK_IMAGE_URL),
 
                 },
 

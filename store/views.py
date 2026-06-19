@@ -30,7 +30,19 @@ def home(request: HttpRequest) -> HttpResponse:
 
 def product_detail(request: HttpRequest, pk: int) -> HttpResponse:
     product = get_object_or_404(Product, pk=pk)
-    return render(request, "product_detail.html", {"product": product})
+    base_products = Product.objects.exclude(pk=product.pk)
+    related_products = base_products.filter(category=product.category)[:4] if product.category else Product.objects.none()
+    similar_products = base_products.exclude(pk__in=related_products.values("pk"))[:4]
+
+    return render(
+        request,
+        "product_detail.html",
+        {
+            "product": product,
+            "related_products": related_products,
+            "similar_products": similar_products,
+        },
+    )
 
 
 def cart_detail(request: HttpRequest) -> HttpResponse:

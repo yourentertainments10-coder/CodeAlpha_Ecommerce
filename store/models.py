@@ -2,6 +2,22 @@ from django.conf import settings
 from django.db import models
 
 
+PRODUCT_IMAGE_FALLBACK_URL = "https://placehold.co/900x675/111827/e5e7eb/png?text=Product+Image"
+
+PRODUCT_IMAGE_FALLBACKS = {
+    "laptop": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&h=675&q=85",
+    "smartphone": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&h=675&q=85",
+    "phone": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&h=675&q=85",
+    "mouse": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&h=675&q=85",
+    "book": "https://placehold.co/900x675/1f2937/f9fafb/png?text=Book+Cover",
+    "books": "https://placehold.co/900x675/1f2937/f9fafb/png?text=Book+Cover",
+    "fashion": "https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=900&h=675&q=85",
+    "shirt": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=900&h=675&q=85",
+    "jacket": "https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=900&h=675&q=85",
+    "shoes": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&h=675&q=85",
+}
+
+
 class Product(models.Model):
     class Meta:
         ordering = ["-created_at"]
@@ -27,9 +43,17 @@ class Product(models.Model):
         if self.image_url:
             return self.image_url
 
-        # Professional fallback placeholder
-        return "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=640&h=480&q=80"
+        return self.display_image_fallback_url
 
+    @property
+    def display_image_fallback_url(self) -> str:
+        image_key = f"{self.category} {self.name}".lower()
+
+        for keyword, url in PRODUCT_IMAGE_FALLBACKS.items():
+            if keyword in image_key:
+                return url
+
+        return PRODUCT_IMAGE_FALLBACK_URL
 
 
 class Cart(models.Model):

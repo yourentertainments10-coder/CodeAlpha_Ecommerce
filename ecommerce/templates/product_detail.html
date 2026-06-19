@@ -2,27 +2,96 @@
 {% block title %}{{ product.name }} - E-commerce{% endblock %}
 
 {% block content %}
-  <div class="product-detail">
-    <div class="product-media">
-      {% if product.display_image_url %}
-        <img class="product-img" src="{{ product.display_image_url }}" alt="{{ product.name }}">
-      {% endif %}
-    </div>
-    <div class="product-info">
-      <h1>{{ product.name }}</h1>
-      <div class="product-price">&#8377;{{ product.price }}</div>
-      {% if product.category %}
-        <p class="stock">Category: {{ product.category }}</p>
-      {% endif %}
-      <p class="product-desc">{{ product.description }}</p>
-      <p class="stock">Stock: {{ product.stock }}</p>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'home' %}">Home</a>
+    <span>&gt;</span>
+    {% if product.category %}
+      <a href="{% url 'home' %}">{{ product.category }}</a>
+    {% else %}
+      <span>Products</span>
+    {% endif %}
+    <span>&gt;</span>
+    <span>{{ product.name }}</span>
+  </nav>
 
-      <div class="actions">
-        <form method="post" action="{% url 'cart_add' product.id %}">
-          {% csrf_token %}
-          <button class="btn primary" type="submit">Add to Cart</button>
-        </form>
+  <a class="btn back-btn" href="javascript:history.back()">Back</a>
+
+  <section class="product-detail product-page-panel">
+    <div class="product-gallery">
+      <div class="product-image-frame">
+        <img class="product-img" src="{{ product.display_image_url }}" alt="{{ product.name }}" onerror="this.onerror=null;this.src='{{ product.display_image_fallback_url }}';">
       </div>
     </div>
-  </div>
+
+    <div class="product-info">
+      {% if product.category %}
+        <div class="product-category">{{ product.category }}</div>
+      {% endif %}
+      <h1 class="product-heading">{{ product.name }}</h1>
+      <div class="product-rating" aria-label="Customer rating">Rating 4.2/5 <span>| 1,248 ratings</span></div>
+      <div class="product-price">&#8377;{{ product.price }}</div>
+      <div class="product-tax-note">Inclusive of all taxes</div>
+
+      {% if product.stock > 0 %}
+        <div class="availability in-stock">In stock: {{ product.stock }} available</div>
+      {% else %}
+        <div class="availability out-stock">Currently out of stock</div>
+      {% endif %}
+
+      <p class="product-desc">{{ product.description }}</p>
+
+      <form method="post" action="{% url 'cart_add' product.id %}" class="product-buy-box">
+        {% csrf_token %}
+        <button class="btn primary product-cart-btn" type="submit" {% if product.stock <= 0 %}disabled{% endif %}>Add to Cart</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <div class="section-head">
+      <h2 class="section-title">Product Specifications</h2>
+    </div>
+    <div class="spec-grid">
+      <div class="spec-row"><span>Product</span><strong>{{ product.name }}</strong></div>
+      <div class="spec-row"><span>Category</span><strong>{{ product.category|default:"General" }}</strong></div>
+      <div class="spec-row"><span>Price</span><strong>&#8377;{{ product.price }}</strong></div>
+      <div class="spec-row"><span>Availability</span><strong>{% if product.stock > 0 %}In stock{% else %}Out of stock{% endif %}</strong></div>
+      <div class="spec-row"><span>Stock</span><strong>{{ product.stock }} units</strong></div>
+      <div class="spec-row"><span>SKU</span><strong>PRD-{{ product.id }}</strong></div>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <div class="section-head">
+      <h2 class="section-title">Related Products</h2>
+    </div>
+    <div class="product-strip">
+      {% for item in related_products %}
+        <a class="mini-product" href="{% url 'product_detail' item.id %}">
+          <img src="{{ item.display_image_url }}" alt="{{ item.name }}" onerror="this.onerror=null;this.src='{{ item.display_image_fallback_url }}';">
+          <div class="mini-product-name">{{ item.name }}</div>
+          <div class="mini-product-price">&#8377;{{ item.price }}</div>
+        </a>
+      {% empty %}
+        <p class="muted">No related products available.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <div class="section-head">
+      <h2 class="section-title">Similar Products</h2>
+    </div>
+    <div class="product-strip">
+      {% for item in similar_products %}
+        <a class="mini-product" href="{% url 'product_detail' item.id %}">
+          <img src="{{ item.display_image_url }}" alt="{{ item.name }}" onerror="this.onerror=null;this.src='{{ item.display_image_fallback_url }}';">
+          <div class="mini-product-name">{{ item.name }}</div>
+          <div class="mini-product-price">&#8377;{{ item.price }}</div>
+        </a>
+      {% empty %}
+        <p class="muted">No similar products available.</p>
+      {% endfor %}
+    </div>
+  </section>
 {% endblock %}
