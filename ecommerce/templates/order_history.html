@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Orders - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Order History</h1>
+  {% if orders %}
+    <div class="orders">
+      {% for order in orders %}
+        <div class="order">
+          <div class="order-top">
+            <div>Order #{{ order.id }}</div>
+            <div>Status: {{ order.status }}</div>
+            <div>Payment: {{ order.payment_method }}</div>
+            <div>Total: ₹{{ order.total_amount|floatformat:2 }}</div>
+            <div>Date: {{ order.order_date }}</div>
+
+          </div>
+          <ul class="order-items">
+            {% for item in order.items.all %}
+              <li>
+                {{ item.product.name }} — Qty {{ item.quantity }} — ₹{{ item.price }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No orders yet.</p>
+  {% endif %}
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmation - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Order Confirmed</h1>
+
+  {% if order %}
+    <div class="confirmation">
+      <div class="confirmation-card">
+        <div class="confirmation-row"><span>Order ID</span><strong>#{{ order.id }}</strong></div>
+        <div class="confirmation-row"><span>Payment Method</span><strong>{{ order.payment_method }}</strong></div>
+        <div class="confirmation-row"><span>Total</span><strong>₹{{ order.total_amount|floatformat:2 }}</strong></div>
+        <div class="confirmation-row"><span>Order Date</span><strong>{{ order.order_date }}</strong></div>
+
+        <div class="confirmation-actions">
+          <a class="btn primary" href="{% url 'home' %}">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+

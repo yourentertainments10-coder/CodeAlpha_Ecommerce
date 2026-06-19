@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Payment Unavailable - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Payment Under Development</h1>
+
+  <div class="alert error">
+    Payment integration is currently under development. Please use Cash on Delivery.
+  </div>
+
+  <div class="actions">
+    <a class="btn primary" href="{% url 'payment_select' %}">Back to payment selection</a>
+    <a class="btn" href="{% url 'checkout' %}">Back to cart</a>
+  </div>
+{% endblock %}
+

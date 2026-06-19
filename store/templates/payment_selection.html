@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Select Payment - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Checkout</h1>
+
+  <div class="checkout-layout">
+    <div class="checkout-main">
+      <h2 class="section-title">Select payment method</h2>
+
+      <form method="post" action="{% url 'payment_select' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="next" value="{{ next|default:'order_confirmation' }}" />
+
+        <div class="payment-methods">
+          <button class="payment-card" type="submit" name="payment_method" value="COD">
+            <div class="payment-title">Cash on Delivery</div>
+            <div class="payment-subtitle">Pay when you receive your order</div>
+          </button>
+
+          <button class="payment-card" type="submit" name="payment_method" value="UPI" disabled>
+            <div class="payment-title">UPI</div>
+            <div class="payment-subtitle">Coming soon</div>
+          </button>
+
+          <button class="payment-card" type="submit" name="payment_method" value="NETBANKING" disabled>
+            <div class="payment-title">Net Banking</div>
+            <div class="payment-subtitle">Coming soon</div>
+          </button>
+
+          <button class="payment-card" type="submit" name="payment_method" value="CARD" disabled>
+            <div class="payment-title">Credit/Debit Card</div>
+            <div class="payment-subtitle">Coming soon</div>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="checkout-summary">
+      <h2 class="section-title">Order Summary</h2>
+      <p class="summary-row"><span>Subtotal</span><span>₹{{ subtotal|floatformat:2 }}</span></p>
+      <p class="summary-row"><span>Delivery</span><span>₹{{ delivery_fee|floatformat:2 }}</span></p>
+      <hr>
+      <p class="summary-total"><span>Total</span><span>₹{{ total|floatformat:2 }}</span></p>
+
+      <p class="summary-note">You will place the order with Cash on Delivery.</p>
+    </aside>
+  </div>
+{% endblock %}
+

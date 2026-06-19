@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Cart - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Your Cart</h1>
+  {% if items %}
+    <div class="cart">
+      {% for item in items %}
+        <div class="cart-item">
+          <div class="cart-item-name">{{ item.product.name }}</div>
+          <div class="cart-item-price">₹{{ item.product.price }}</div>
+          <div class="cart-item-qty">
+            <form method="post" action="{% url 'cart_update' item.product.id %}">
+              {% csrf_token %}
+              <input class="qty" type="number" name="quantity" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}">
+              <button class="btn" type="submit">Update</button>
+            </form>
+          </div>
+          <div class="cart-item-total">₹{{ item.product.price|floatformat:2 }} × {{ item.quantity }} = ₹{{ item.product.price|floatformat:2|add:'0'|floatformat:2 }}</div>
+
+
+          <div class="cart-item-actions">
+            <form method="post" action="{% url 'cart_remove' item.product.id %}">
+              {% csrf_token %}
+              <button class="btn danger" type="submit">Remove</button>
+            </form>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="cart-summary">
+      <div class="cart-total">Total: ₹{{ total|floatformat:2 }}</div>
+      <a class="btn primary" href="{% url 'checkout' %}">Checkout</a>
+    </div>
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+{% endblock %}
+

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} - E-commerce{% endblock %}
+
+{% block content %}
+  <div class="product-detail">
+    <div class="product-media">
+      {% if product.display_image_url %}
+        <img class="product-img" src="{{ product.display_image_url }}" alt="{{ product.name }}">
+      {% endif %}
+    </div>
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <div class="product-price">&#8377;{{ product.price }}</div>
+      {% if product.category %}
+        <p class="stock">Category: {{ product.category }}</p>
+      {% endif %}
+      <p class="product-desc">{{ product.description }}</p>
+      <p class="stock">Stock: {{ product.stock }}</p>
+
+      <div class="actions">
+        <form method="post" action="{% url 'cart_add' product.id %}">
+          {% csrf_token %}
+          <button class="btn primary" type="submit">Add to Cart</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

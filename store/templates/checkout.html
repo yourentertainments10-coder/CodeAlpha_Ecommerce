@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - E-commerce{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Checkout</h1>
+
+  {% if items %}
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <h2 class="section-title">Review items</h2>
+
+        <div class="checkout-items">
+          {% for item in items %}
+            <div class="checkout-item">
+              <div class="checkout-item-name">
+                {{ item.product.name }}
+                <div class="checkout-item-meta">Qty: {{ item.quantity }}</div>
+              </div>
+              <div class="checkout-item-price">₹{{ item.product.price|floatformat:2 }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <a class="btn primary checkout-continue" href="{% url 'payment_select' %}">Select payment method</a>
+      </div>
+
+      <aside class="checkout-summary">
+        <h2 class="section-title">Order Summary</h2>
+        <p class="summary-row"><span>Subtotal</span><span>₹{{ subtotal|floatformat:2 }}</span></p>
+        <p class="summary-row"><span>Delivery</span><span>₹{{ delivery_fee|floatformat:2 }}</span></p>
+        <hr>
+        <p class="summary-total"><span>Total</span><span>₹{{ total|floatformat:2 }}</span></p>
+      </aside>
+    </div>
+  {% else %}
+    <p>Your cart is empty.</p>
+  {% endif %}
+{% endblock %}
+

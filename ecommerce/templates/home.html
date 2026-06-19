@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Home - E-commerce{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="hero-kicker">Best Tech Deals</div>
+        <h1 class="hero-title">Summer Sale on Laptops, Phones & More</h1>
+        <p class="hero-subtitle">Upgrade your everyday essentials with handpicked offers.</p>
+        <a class="btn primary" href="#best-deals">Shop Now</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories" aria-label="Categories">
+    <div class="section-head">
+      <h2 class="section-title">Shop by category</h2>
+    </div>
+
+    <div class="category-grid">
+      {% for cat in "Electronics,Accessories,Gaming,Fashion,Books".split(',') %}
+        <div class="category-card" role="group" aria-label="{{ cat }}">
+          <div class="category-name">{{ cat }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="best-deals" class="best-deals">
+    <div class="section-head">
+      <h2 class="section-title">Best Deals</h2>
+      <p class="section-subtitle">Fast checkout. Real-time inventory.</p>
+    </div>
+
+    <div class="search-row" role="search">
+      <form class="search-form" method="get" action="{% url 'home' %}">
+        <input class="search-input" type="search" name="q" placeholder="Search products by name..." value="{{ request.GET.q|default:'' }}">
+        <button class="btn" type="submit">Search</button>
+      </form>
+    </div>
+
+    <div class="grid">
+      {% for product in products %}
+        <div class="card product-card">
+          <div class="product-media">
+            {% if product.display_image_url %}
+              <img class="card-img" src="{{ product.display_image_url }}" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+
+          <div class="card-body">
+            <div class="product-badges">
+              {% if product.category %}
+                <span class="badge">{{ product.category }}</span>
+              {% endif %}
+              {% if product.stock > 0 %}
+                <span class="badge badge-stock">In Stock ({{ product.stock }})</span>
+              {% else %}
+                <span class="badge badge-oos">Out of Stock</span>
+              {% endif %}
+            </div>
+
+            <h3 class="card-title">{{ product.name }}</h3>
+            <div class="card-price">₹{{ product.price }}</div>
+            <p class="card-desc">{{ product.description|truncatewords:20 }}</p>
+
+            <div class="card-actions">
+              <form method="post" action="{% url 'cart_add' product.id %}" class="inline-form">
+                {% csrf_token %}
+                <button class="btn primary" type="submit" {% if product.stock <= 0 %}disabled{% endif %}>Add to Cart</button>
+              </form>
+              <a class="btn" href="{% url 'product_detail' product.id %}">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No products available.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
