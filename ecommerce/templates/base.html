@@ -12,6 +12,10 @@
   <header class="site-header">
     <nav class="nav">
       <a class="brand" href="{% url 'home' %}">E-commerce</a>
+      <form class="nav-search" method="get" action="{% url 'home' %}" role="search">
+        <input class="nav-search-input" type="search" name="q" placeholder="Search products..." value="{{ request.GET.q|default:'' }}">
+        <button class="nav-search-btn" type="submit">Search</button>
+      </form>
       <div class="nav-right">
         <a class="nav-link" href="{% url 'cart_detail' %}">Cart</a>
         {% if user.is_authenticated %}

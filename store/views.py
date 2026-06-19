@@ -24,7 +24,26 @@ def _get_or_create_cart(user):
 
 def home(request: HttpRequest) -> HttpResponse:
     products = Product.objects.all()
-    return render(request, "home.html", {"products": products})
+    categories = ["Electronics", "Accessories", "Gaming", "Fashion", "Books"]
+    query = request.GET.get("q", "").strip()
+    selected_category = request.GET.get("category", "").strip()
+
+    if query:
+        products = products.filter(name__icontains=query)
+
+    if selected_category:
+        products = products.filter(category__iexact=selected_category)
+
+    return render(
+        request,
+        "home.html",
+        {
+            "products": products,
+            "categories": categories,
+            "query": query,
+            "selected_category": selected_category,
+        },
+    )
 
 
 
@@ -50,9 +69,28 @@ def cart_detail(request: HttpRequest) -> HttpResponse:
         return redirect("login")
 
     cart = _get_or_create_cart(request.user)
-    items = cart.items.select_related("product").all()
-    total = sum((item.product.price * item.quantity) for item in items)
-    return render(request, "cart.html", {"items": items, "total": total})
+    items = list(cart.items.select_related("product").all())
+    subtotal = Decimal("0")
+
+    for item in items:
+        item.line_total = item.product.price * item.quantity
+        subtotal += item.line_total
+
+    delivery_charge = Decimal("0.00")
+    tax_amount = Decimal("0.00")
+    grand_total = subtotal + delivery_charge + tax_amount
+
+    return render(
+        request,
+        "cart.html",
+        {
+            "items": items,
+            "subtotal": subtotal,
+            "delivery_charge": delivery_charge,
+            "tax_amount": tax_amount,
+            "grand_total": grand_total,
+        },
+    )
 
 
 @login_required(login_url="login")

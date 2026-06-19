@@ -5,9 +5,9 @@
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-copy">
-        <div class="hero-kicker">Best Tech Deals</div>
-        <h1 class="hero-title">Summer Sale on Laptops, Phones & More</h1>
-        <p class="hero-subtitle">Upgrade your everyday essentials with handpicked offers.</p>
+        <div class="hero-kicker">Summer Sale</div>
+        <h1 class="hero-title">Best Tech Deals on Laptops, Phones & More</h1>
+        <p class="hero-subtitle">Shop curated electronics, accessories, fashion essentials, and books with fast checkout.</p>
         <a class="btn primary" href="#best-deals">Shop Now</a>
       </div>
     </div>
@@ -15,27 +15,42 @@
 
   <section class="categories" aria-label="Categories">
     <div class="section-head">
-      <h2 class="section-title">Shop by category</h2>
+      <div>
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-subtitle">Browse popular departments</p>
+      </div>
     </div>
 
     <div class="category-grid">
-      {% for cat in "Electronics,Accessories,Gaming,Fashion,Books".split(',') %}
-        <div class="category-card" role="group" aria-label="{{ cat }}">
+      {% for cat in categories %}
+        <a class="category-card {% if selected_category == cat %}active{% endif %}" href="{% url 'home' %}?category={{ cat }}" aria-label="{{ cat }}">
           <div class="category-name">{{ cat }}</div>
-        </div>
+          <div class="category-copy">Explore now</div>
+        </a>
       {% endfor %}
     </div>
   </section>
 
   <section id="best-deals" class="best-deals">
-    <div class="section-head">
-      <h2 class="section-title">Best Deals</h2>
-      <p class="section-subtitle">Fast checkout. Real-time inventory.</p>
-    </div>
+    <div class="catalog-toolbar">
+      <div>
+        <h2 class="section-title">Best Deals</h2>
+        <p class="section-subtitle">
+          {% if query %}
+            Search results for "{{ query }}"
+          {% elif selected_category %}
+            Showing {{ selected_category }} products
+          {% else %}
+            Fast checkout. Real-time inventory.
+          {% endif %}
+        </p>
+      </div>
 
-    <div class="search-row" role="search">
-      <form class="search-form" method="get" action="{% url 'home' %}">
-        <input class="search-input" type="search" name="q" placeholder="Search products by name..." value="{{ request.GET.q|default:'' }}">
+      <form class="search-form" method="get" action="{% url 'home' %}" role="search">
+        {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+        <input class="search-input" type="search" name="q" placeholder="Search products by name..." value="{{ query }}">
         <button class="btn" type="submit">Search</button>
       </form>
     </div>
@@ -62,7 +77,7 @@
             </div>
 
             <h3 class="card-title">{{ product.name }}</h3>
-            <div class="card-price">₹{{ product.price }}</div>
+            <div class="card-price">&#8377;{{ product.price }}</div>
             <p class="card-desc">{{ product.description|truncatewords:20 }}</p>
 
             <div class="card-actions">
@@ -75,7 +90,11 @@
           </div>
         </div>
       {% empty %}
-        <p>No products available.</p>
+        <div class="empty-state">
+          <h3>No products found</h3>
+          <p>Try another search or browse all categories.</p>
+          <a class="btn" href="{% url 'home' %}">View All Products</a>
+        </div>
       {% endfor %}
     </div>
   </section>
